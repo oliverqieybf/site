@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noise Data Tracker</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .selected-member {
+            background-color: #8b5cf6; /* Tailwind's bg-purple-500 */
+            color: #f5f5f5; /* Tailwind's text-gray-100 */
+            padding: 0.5rem 1rem;
+            border-radius: 1rem; /* Tailwind's rounded-full */
+            margin: 0.25rem; /* Tailwind's m-0.5 */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Tailwind's gap-2 */
+        }
+        .remove-member-button {
+            color: #f5f5f5;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .remove-member-button:hover {
+            color: #d8b4fe; /* Tailwind's hover:text-purple-200 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <h1 class="text-2xl md:text-4xl font-bold text-center mb-6 md:mb-10 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+        Noise Data Tracker
+    </h1>
+
+    <div class="max-w-md mx-auto space-y-6">
+        <div class="bg-white rounded-xl p-4 md:p-6 shadow-lg border border-gray-200">
+            <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-900">Add New Entry</h2>
+            <div class="space-y-4 md:space-y-6">
+                <div class="space-y-2">
+                    <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
+                    <select id="month" class="w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="">Select a month</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="members" class="block text-sm font-medium text-gray-700">Members</label>
+                    <select id="members" class="w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="">Select members</option>
+                        <option value="Ava D">Ava D</option>
+                        <option value="Ayden M">Ayden M</option>
+                        <option value="Brynlee L">Brynlee L</option>
+                        <option value="Colt H">Colt H</option>
+                        <option value="Charlotte P">Charlotte P</option>
+                        <option value="Dakota D">Dakota D</option>
+                        <option value="Dima S">Dima S</option>
+                        <option value="Felicity S">Felicity S</option>
+                        <option value="Julian T">Julian T</option>
+                        <option value="Keira C">Keira C</option>
+                        <option value="Katya S">Katya S</option>
+                        <option value="Loreli W">Loreli W</option>
+                        <option value="Lauryn Y">Lauryn Y</option>
+                        <option value="Maia C">Maia C</option>
+                        <option value="Maison M">Maison M</option>
+                        <option value="Molly M">Molly M</option>
+                    </select>
+                     <div id="selected-members" class="mt-2 flex flex-wrap gap-2">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="noise" class="block text-sm font-medium text-gray-700">Noise Level</label>
+                    <div class="flex gap-4">
+                        <button id="quiet-button" type="button" class="w-1/2 bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            Quiet
+                        </button>
+                        <button id="loud-button" type="button" class="w-1/2 bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            Loud
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button id="save-button" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
+                    Save
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 md:p-6 shadow-lg border border-gray-200 overflow-x-auto">
+            <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-900">Data Log</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-red-600 mb-2">Loud</h3>
+                    <div id="loud-data-table" class="rounded-md border border-gray-300 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                    <th scope="col" class="relative px-6 py-3">
+                                        <span class="sr-only">Actions</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="no-loud-data" class="text-gray-500 text-center py-2">No loud data available.</div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-green-600 mb-2">Quiet</h3>
+                    <div id="quiet-data-table" class="rounded-md border border-gray-300 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                    <th scope="col" class="relative px-6 py-3">
+                                        <span class="sr-only">Actions</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="no-quiet-data" class="text-gray-500 text-center py-2">No quiet data available.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="delete-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938-9c-.59 4.465-3.032 8.088-5.962 8.088c-1.68 0-3.19-.83-3.887-2.038m7.396 0c.414 0 .832.081 1.246.23"></path>
+                                </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                    Confirm Delete
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500">
+                                        Are you sure you want to delete this entry? This action cannot be undone.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button id="delete-confirm-button" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Delete
+                        </button>
+                        <button id="delete-cancel-button" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="message-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+            </div>
+    </div>
+
+    <script>
+        const members = [
+            { id: '1', name: 'Ava D' },
+            { id: '2', name: 'Ayden M' },
+            { id: '3', name: 'Brynlee L' },
+            { id: '4', name: 'Colt H' },
+            { id: '5', name: 'Charlotte P' },
+            { id: '6', name: 'Dakota D' },
+            { id: '7', name: 'Dima S' },
+            { id: '8', name: 'Felicity S' },
+            { id: '9', name: 'Julian T' },
+            { id: '10', name: 'Keira C' },
+            { id: '11', name: 'Katya S' },
+            { id: '12', name: 'Loreli W' },
+            { id: '13', name: 'Lauryn Y' },
+            { id: '14', name: 'Maia C' },
+            { id: '15', name: 'Maison M' },
+            { id: '16', name: 'Molly M' },
+        ];
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        let data = JSON.parse(localStorage.getItem('noiseDataTracker') || '[]');
+        let editId = null;
+        let itemToDelete = null;
+
+        const monthSelect = document.getElementById('month');
+        const memberSelect = document.getElementById('members');
+        const selectedMembersDisplay = document.getElementById('selected-members');
+        const quietButton = document.getElementById('quiet-button');
+        const loudButton = document.getElementById('loud-button');
+        const saveButton = document.getElementById('save-button');
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteConfirmButton = document.getElementById('delete-confirm-button');
+        const deleteCancelButton = document.getElementById('delete-cancel-button');
+        const messageContainer = document.getElementById('message-container');
+
+        let selectedMembers = [];
+        let noiseLevel = 'Quiet';
+
+        function saveData() {
+            localStorage.setItem('noiseDataTracker', JSON.stringify(data));
+        }
+
+        function resetForm() {
+            monthSelect.value = '';
+            selectedMembers = [];
+            selectedMembersDisplay.innerHTML = '';
+            noiseLevel = 'Quiet';
+            quietButton.classList.remove('bg-green-500', 'text-green-400', 'border-green-500');
+            quietButton.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            loudButton.classList.remove('bg-red-500', 'text-red-400', 'border-red-500');
+            loudButton.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            editId = null;
+            removeMessage();
+        }
+
+        function showMessage(type, message) {
+            removeMessage();
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('rounded-md', 'p-4', 'shadow-lg', 'transition-opacity', 'duration-300');
+            if (type === 'success') {
+                messageDiv.classList.add('bg-green-100', 'text-green-800', 'border-l-4', 'border-green-500');
+                messageDiv.innerHTML = `<div class="flex items-center"><div class="flex-shrink-0"><svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2z" clip-rule="evenodd"/></svg></div><div class="ml-3"><p class="text-sm font-medium">${message}</p></div></div>`;
+            } else if (type === 'error') {
+                messageDiv.classList.add('bg-red-100', 'text-red-800', 'border-l-4', 'border-red-500');
+                messageDiv.innerHTML = `<div class="flex items-center"><div class="flex-shrink-0"><svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div><div class="ml-3"><p class="text-sm font-medium">${message}</p></div></div>`;
+            }
+            messageContainer.appendChild(messageDiv);
+            setTimeout(() => {
+                messageDiv.classList.add('opacity-0');
+                setTimeout(()=> messageDiv.remove(), 300);
+            }, 3000);
+        }
+
+        function removeMessage() {
+            while (messageContainer.firstChild) {
+                messageContainer.removeChild(messageContainer.firstChild);
+            }
+        }
+
+        memberSelect.addEventListener('change', () => {
+            const selectedOption = memberSelect.value;
+            if (selectedOption) {
+                if (!selectedMembers.includes(selectedOption)) {
+                    selectedMembers.push(selectedOption);
+                    const memberDiv = document.createElement('div');
+                    memberDiv.classList.add('selected-member');
+                    memberDiv.textContent = selectedOption;
+
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.classList.add('remove-member-button');
+                    removeButton.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                    removeButton.addEventListener('click', () => {
+                        selectedMembers = selectedMembers.filter(m => m !== selectedOption);
+                        selectedMembersDisplay.removeChild(memberDiv);
+                    });
+
+                    memberDiv.appendChild(removeButton);
+                    selectedMembersDisplay.appendChild(memberDiv);
+                }
+                memberSelect.value = '';
+            }
+        });
+
+        quietButton.addEventListener('click', () => {
+            noiseLevel = 'Quiet';
+            quietButton.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+            quietButton.classList.add('bg-green-500', 'text-green-400', 'border-green-500');
+            loudButton.classList.remove('bg-red-500', 'text-red-400', 'border-red-500');
+            loudButton.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+        });
+
+        loudButton.addEventListener('click', () => {
+            noiseLevel = 'Loud';
+            loudButton.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+            loudButton.classList.add('bg-red-500', 'text-red-400', 'border-red-500');
+            quietButton.classList.remove('bg-green-500', 'text-green-400', 'border-green-500');
+            quietButton.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+        });
+
+        saveButton.addEventListener('click', () => {
+            const month = monthSelect.value;
+
+            if (!month || selectedMembers.length === 0) {
+                showMessage('error', 'Please select month and members.');
+                return;
+            }
+
+            const newEntry = {
+                id: editId || crypto.randomUUID(),
+                month,
+                members: selectedMembers,
+                noiseLevel,
+                timestamp: new Date().toLocaleString(),
+            };
+
+            if (editId) {
+                data = data.map(item => item.id === editId ? newEntry : item);
+                showMessage('success', 'Data updated successfully!');
+            } else {
+                data.push(newEntry);
+                showMessage('success', 'Data saved successfully!');
+            }
+            saveData();
+            resetForm();
+            renderData();
+        });
+
+        function handleEdit(id) {
+            const itemToEdit = data.find(item => item.id === id);
+            if (itemToEdit) {
+                editId = id;
+                monthSelect.value = itemToEdit.month;
+                selectedMembers = itemToEdit.members;
+                selectedMembersDisplay.innerHTML = '';
+                itemToEdit.members.forEach(memberId => {
+                    const memberName = members.find(m => m.id === memberId)?.name || 'Unknown';
+                    const memberDiv = document.createElement('div');
+                    memberDiv.classList.add('selected-member');
+                    memberDiv.textContent = memberName;
+
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.classList.add('remove-member-button');
+                    removeButton.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                    removeButton.addEventListener('click', () => {
+                        selectedMembers = selectedMembers.filter(m => m !== memberId);
+                        selectedMembersDisplay.removeChild(memberDiv);
+                    });
+
+                    memberDiv.appendChild(removeButton);
+                    selectedMembersDisplay.appendChild(memberDiv);
+                });
+
+                noiseLevel = itemToEdit.noiseLevel;
+                if (noiseLevel === 'Quiet') {
+                    quietButton.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+                    quietButton.classList.add('bg-green-500', 'text-green-400', 'border-green-500');
+                    loudButton.classList.remove('bg-red-50
